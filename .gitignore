@@ -66,3 +66,7 @@ _pycache_/
 *.class
 *.so
 *.ipynb
+
+
+# Ignorando archivo de la base de datos
+db.sqlite
