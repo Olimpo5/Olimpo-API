@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from models import Usuario, Rutina, Ejercicio
+from db import DBsesion, crearTablasDB
+from sqlmodel import select
 
 # Instanciamos FastAPI
-app = FastAPI()
+app = FastAPI(lifespan=crearTablasDB)
 
 @app.get("/")
 def root():
@@ -13,16 +15,19 @@ db_usuarios = []
 
 #endpoint para crear usuarios
 @app.post("/usuarios", response_model=Usuario)
-def crear_Usuario(datos_usuario: Usuario):
+def crear_Usuario(datos_usuario: Usuario, session: DBsesion):
     usuario = Usuario.model_validate(datos_usuario.model_dump())
-    usuario.id_usuario = len(db_usuarios)
-    db_usuarios.append(usuario)
+    # usuario.id_usuario = len(db_usuarios)
+    # db_usuarios.append(usuario)
+    session.add(usuario)
+    session.commit()
+    session.refresh(usuario)
     return usuario
 
 #endpoint para listar los usuarios creados
 @app.get("/usuarios", response_model=db_usuarios)
-def lista_usuarios():
-    return db_usuarios
+def lista_usuarios(session: DBsesion):
+    return session.exec(select(Usuario)).all()
 
 @app.post("/rutina")
 def crear_Rutina(datos_rutina: Rutina):
