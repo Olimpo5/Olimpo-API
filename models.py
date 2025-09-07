@@ -13,6 +13,13 @@ class UsuarioBase(SQLModel):
     foto_perfil: str = Field(default=None, max_length=50, nullable=False)
     objetivo: str = Field(default=None, max_length=50, nullable=False)
 
+
+class UsuarioCreate(UsuarioBase):
+    pass
+
+class UsuarioUpdate(UsuarioBase):
+    pass
+
 # Generacion de id de manera automatica
 class Usuario(UsuarioBase, table=True):
     id_usuario:int | None = Field(default=None, primary_key=True)
