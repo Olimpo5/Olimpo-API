@@ -1,20 +1,12 @@
-from fastapi import FastAPI, HTTPException, status
+from fastapi import APIRouter, status, HTTPException
+from sqlmodel import select
 from models import Usuario, UsuarioUpdate, UsuarioCreate#, Rutina, Ejercicio
 from db import DBsesion, crearTablasDB
-from sqlmodel import select
 
-# Instanciamos FastAPI
-app = FastAPI(lifespan=crearTablasDB)
+router = APIRouter()
 
-@app.get("/")
-def root():
-    return {"message": "Hola Mundo"}
-
-# Array que contiene los usuarios creados por mientras
-db_usuarios = []
-
-#endpoint para crear usuarios
-@app.post("/usuarios", response_model=Usuario)
+#endpoint para crear un usuarios
+@router.post("/usuarios", response_model=Usuario, tags=["Usuarios"])
 def crear_Usuario(datos_usuario: UsuarioCreate, session: DBsesion):
     usuario = Usuario.model_validate(datos_usuario.model_dump())
     session.add(usuario)
@@ -23,13 +15,13 @@ def crear_Usuario(datos_usuario: UsuarioCreate, session: DBsesion):
     return usuario
 
 #endpoint para listar los usuarios creados
-@app.get("/usuarios", response_model=db_usuarios)
+@router.get("/usuarios", tags=["Usuarios"])
 def lista_usuarios(session: DBsesion):
     return session.exec(select(Usuario)).all()
 
 
 #Mostrar un usuario por su numero de id
-@app.get("/usuarios/{usuario_id}", response_model=Usuario)
+@router.get("/usuarios/{usuario_id}", response_model=Usuario, tags=["Usuarios"])
 def ver_usuario(usuario_id:int, session: DBsesion):
     usuario_db = session.get(Usuario, usuario_id)
     if not usuario_db:
@@ -37,7 +29,7 @@ def ver_usuario(usuario_id:int, session: DBsesion):
     return usuario_db
 
 #Eliminar un usuario por su numero de id
-@app.delete("/usuarios/{usuario_id}")
+@router.delete("/usuarios/{usuario_id}", tags=["Usuarios"])
 def borrar_usuario(usuario_id:int, session: DBsesion):
     usuario_db = session.get(Usuario, usuario_id)
     if not usuario_db:
@@ -47,7 +39,7 @@ def borrar_usuario(usuario_id:int, session: DBsesion):
     return {"detail": "Usuario eliminado"}
 
 # Actualizar un usuario por su numero de id
-@app.patch("/usuarios/{usuario_id}", response_model=Usuario, status_code=status.HTTP_201_CREATED)
+@router.patch("/usuarios/{usuario_id}", response_model=Usuario, status_code=status.HTTP_201_CREATED, tags=["Usuarios"])
 def actualizar_usuario(usuario_id:int, datos_usuario: UsuarioUpdate, session: DBsesion):
     usuario_db = session.get(Usuario, usuario_id)
     if not usuario_db:
@@ -59,11 +51,3 @@ def actualizar_usuario(usuario_id:int, datos_usuario: UsuarioUpdate, session: DB
     session.commit()
     session.refresh(usuario_db)
     return usuario_db
-
-# @app.post("/rutina")
-# def crear_Rutina(datos_rutina: Rutina):
-#     return datos_rutina
-
-# @app.post("/ejercicio")
-# def crear_ejercicio(datos_ejercicio: Ejercicio):
-#     return datos_ejercicio

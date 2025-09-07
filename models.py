@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional
 
 # Datos del usuario que necesitamos para rellenar en formularios
 class UsuarioBase(SQLModel):
@@ -20,19 +21,31 @@ class UsuarioCreate(UsuarioBase):
 class UsuarioUpdate(UsuarioBase):
     pass
 
-# Generacion de id de manera automatica
 class Usuario(UsuarioBase, table=True):
     id_usuario:int | None = Field(default=None, primary_key=True)
+    rutinas: list["Rutina"] = Relationship(back_populates="usuario")
+
+# Modelo de Rutina
+class RutinaBase(SQLModel):
+    nombre: str = Field(default=None, max_length=50, nullable=False)
+    descripcion: str = Field(default=None, max_length=50, nullable=False)
+    fecha_creacion: str = Field(default=None, max_length=50, nullable=False)
+    duracion_minutos: int = Field(default=None, nullable=True)
+    frecuencia_semanal: int = Field(default=None, nullable=True)
+
+class RutinaCreate(RutinaBase):
+    pass
+
+class RutinaUpdate(RutinaBase):
+    pass
+
+class Rutina(RutinaBase, table=True):
+    id_rutina: int | None = Field(default=None, primary_key=True)
+    usuario_id: int | None = Field(default=None, foreign_key="usuario.id_usuario")
+    usuario : Optional[Usuario] = Relationship(back_populates="rutinas")
+    # id_nivel_dificultad: int | None = Field(default=None, foreign_key="")
 
 
-# class Rutina(BaseModel):
-#     id_rutina: int
-#     id_nivel_dificultad: int
-#     nombre: str
-#     descripcion: str
-#     fecha_creacion: str
-#     duracion: int
-#     frecuencia_semanal: int 
 
 # class Ejercicio(BaseModel):
 #     id_ejercicio: int
