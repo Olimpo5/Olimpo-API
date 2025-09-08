@@ -51,6 +51,23 @@ def listar_rutinas_de_usuario(id_usuario: int, session: DBsesion):
     rutinas = session.exec(select(Rutina).where(Rutina.usuario_id == id_usuario)).all()
     return rutinas
 
+# endpoint para actualizar rutinas
+@router.patch("/rutinas/{id_rutina}", response_model=Rutina, status_code=status.HTTP_201_CREATED, tags=[rutina_tag])
+def actualizar_rutina(rutina_id:int, datos_rutina: RutinaUpdate, session:DBsesion):
+    rutina_db = session.get(Rutina, rutina_id)
+    if not rutina_db:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rutina no encontrada")
+    
+    rutina_dict = datos_rutina.model_dump(exclude_unset=True)
+    rutina_db.sqlmodel_update(rutina_dict)
+    session.add(rutina_db)
+    session.commit()
+    session.refresh(rutina_db)
+    return rutina_db
+
+
+
+# endpoint para eliminar rutinas
 @router.delete("/usuarios/{usuario_id}/rutinas/{rutina_id}", tags=["Rutinas"])
 def eliminar_rutina_de_usuario(
     usuario_id: int,

@@ -64,11 +64,20 @@ class EjercicioRutina(SQLModel, table=True):
 
 
 # Tabla Nivel Dificultad (Tabla de Detalle)
-class NivelDificultad(SQLModel, table=True):
-    id_nivel_dificultad: int | None = Field(default=None, nullable=False, primary_key=True)
+class NivelDificultadBase(SQLModel):
     nombre: str = Field(nullable=False, max_length=50)
     descripcion: str = Field(nullable=False, max_length=50)
     valor_numerico: int = Field(nullable=False)
+
+class NivelDificultadCreate(NivelDificultadBase):
+    pass
+
+class NivelDificultadUpdate(NivelDificultadBase):
+    pass
+
+class NivelDificultad(NivelDificultadBase, table=True):
+    id_nivel_dificultad: int | None = Field(default=None, nullable=False, primary_key=True)
+    
 
 
 
@@ -114,7 +123,7 @@ class EquipoNecesarioUpdate(EquipoNecesarioBase):
     pass
 
 class EquipoNecesario(EquipoNecesarioBase, table=True):
-    id_equipo_necesario: int = Field(nullable=False, primary_key=True)
+    id_equipo_necesario: int | None = Field(default=None, primary_key=True)
     ejercicios: list["Ejercicio"] = Relationship(back_populates="equipo_necesario")
 
 
@@ -133,8 +142,8 @@ class GrupoMuscularCreate(GrupoMuscularBase):
 class GrupoMuscularUpdate(GrupoMuscularBase):
     pass
 
-class GrupoMuscular(SQLModel, table=True):
-    id_grupo_muscular: int = Field(nullable=False, primary_key=True)
+class GrupoMuscular(GrupoMuscularBase, table=True):
+    id_grupo_muscular: int | None = Field(default=None, primary_key=True)
     
     ejercicios_enfocados: list["EjercicioGrupoMuscular"] = Relationship(back_populates="grupo_muscular")
     rutinas_enfocadas: list["RutinaGrupoMuscular"] = Relationship(back_populates="grupo_muscular")
@@ -171,8 +180,23 @@ class EjercicioGrupoMuscular(SQLModel, table=True):
 
 
 # Falta la tabla de Tipo Trabajado
-class TipoTrabajado(SQLModel, table=True):
-    id_tipo_trabajado: int = Field(primary_key=True, nullable=False, default=None)
+class TipoTrabajadoBase(SQLModel):
     nombre: str = Field(max_length=50, nullable=False)
     descripcion: str = Field(max_length=50, nullable=False)
+
+class TipoTrabajadoCreate(TipoTrabajadoBase):
+    pass
+
+class TipoTrabajadoUpdate(TipoTrabajadoBase):
+    pass
+
+class TipoTrabajado(TipoTrabajadoBase, table=True):
+    id_tipo_trabajado: int = Field(primary_key=True, nullable=False, default=None)
     ejercicio_grupo_muscular: list["EjercicioGrupoMuscular"] = Relationship(back_populates="tipo_trabajado")
+
+
+# class TipoTrabajado(SQLModel, table=True):
+#     id_tipo_trabajado: int = Field(primary_key=True, nullable=False, default=None)
+#     nombre: str = Field(max_length=50, nullable=False)
+#     descripcion: str = Field(max_length=50, nullable=False)
+#     ejercicio_grupo_muscular: list["EjercicioGrupoMuscular"] = Relationship(back_populates="tipo_trabajado")
