@@ -6,6 +6,7 @@ from db import DBsesion
 router = APIRouter()
 tag_ejercicio = "Ejercicios"
 
+#Crear un nuevo ejercicio
 @router.post("/ejercicios", response_model=Ejercicio, tags=[tag_ejercicio])
 def crear_Ejercicio(datos_ejercicio: EjercicioCreate, session: DBsesion):
     ejercicio = Ejercicio.model_validate(datos_ejercicio.model_dump())
@@ -13,3 +14,6 @@ def crear_Ejercicio(datos_ejercicio: EjercicioCreate, session: DBsesion):
     session.commit()
     session.refresh(ejercicio)
     return ejercicio
+
+
+#Listar los ejercicios

@@ -94,6 +94,7 @@ class Ejercicio(EjercicioBase, table=True):
     ejercicio_rutinas: list["EjercicioRutina"] = Relationship(back_populates="ejercicio")
 
     grupos_musculares: list["EjercicioGrupoMuscular"] = Relationship(back_populates="ejercicio")
+    equipo_necesario: Optional["EquipoNecesario"] = Relationship(back_populates="ejercicios")
 
 
 
