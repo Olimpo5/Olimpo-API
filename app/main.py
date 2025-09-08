@@ -2,12 +2,14 @@ from fastapi import FastAPI, HTTPException, status
 from models import Usuario, UsuarioUpdate, UsuarioCreate#, Rutina, Ejercicio
 from db import DBsesion, crearTablasDB
 from sqlmodel import select
-from .routers import usuarios, rutinas
+from .routers import usuarios, rutinas, ejercicios
 
 # Instanciamos FastAPI
 app = FastAPI(lifespan=crearTablasDB)
 app.include_router(usuarios.router)
 app.include_router(rutinas.router)
+app.include_router(ejercicios.router)
+
 
 @app.get("/")
 def root():
