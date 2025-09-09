@@ -54,3 +54,17 @@ def eliminar_equipo_necesario(equipo_id:int, session: DBsesion):
     session.delete(equipo_db)
     session.commit()
     return {"detail": "Equipo eliminado exitosamente"}  
+
+
+# ENDPOINT RELACIONAL
+
+# Endpoint para ver los ejercicios que usan un determinado equipo
+@router.get("/EquipoNecesario/{id_equipo_necesario}", tags=[tag_router])
+def listar_ejercicios_por_equipo(id_equipo:int, session:DBsesion):
+    equipo = session.get(EquipoNecesario, id_equipo)
+    if not equipo:
+        raise HTTPException(status_code=404, detail="Equipo no encontrado")
+
+    ejercicios = equipo.ejercicios  
+
+    return {"equipo_id": id_equipo, "nombre_equipo": equipo.nombre, "ejercicios": ejercicios}

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, HTTPException
 from sqlmodel import select
-from models import GrupoMuscularBase, GrupoMuscularCreate, GrupoMuscularUpdate, GrupoMuscular
+from models import *
 from db import DBsesion
 
 router = APIRouter()
@@ -51,3 +51,39 @@ def eliminar_grupo_muscular(grupo_id:int, session:DBsesion):
     session.delete(grupo)
     session.commit()
     return {"detail": "Grupo Eliminado"}
+
+
+# ENDPOINTS RELACIONADOS
+
+# Endpoint para listar los ejercicios que trabajan ese grupo
+@router.get("/grupo_muscular/{grupo_id}/ejercicios" , tags=[router_tag])
+def listar_ejercicios_grupo(grupo_id:int, session:DBsesion):
+    grupo = session.get(GrupoMuscular, grupo_id)
+    if not grupo:
+        raise HTTPException(status_code=404, detail="Grupo muscular no encontrado")
+
+    query = (
+        select(Ejercicio)
+        .join(EjercicioGrupoMuscular, EjercicioGrupoMuscular.id_ejercicio == Ejercicio.id_ejercicio)
+        .where(EjercicioGrupoMuscular.id_grupo_muscular == grupo_id)
+    )
+    ejercicios = session.exec(query).all()
+
+    return {"grupo_muscular_id": grupo_id, "nombre": grupo.nombre, "ejercicios": ejercicios}
+
+
+# Endpoint para ver las rutinas enfocadas en un grupo
+@router.get("/grupo_muscular/{grupo_id}/rutinas" , tags=[router_tag])
+def listar_rutinas_grupo(grupo_id:int, session:DBsesion):
+    grupo = session.get(GrupoMuscular, grupo_id)
+    if not grupo:
+        raise HTTPException(status_code=404, detail="Grupo muscular no encontrado")
+
+    query = (
+        select(Rutina)
+        .join(RutinaGrupoMuscular, RutinaGrupoMuscular.id_rutina == Rutina.id_rutina)
+        .where(RutinaGrupoMuscular.id_grupo_muscular == grupo_id)
+    )
+    rutinas = session.exec(query).all()
+
+    return {"grupo_muscular_id": grupo_id, "nombre": grupo.nombre, "rutinas": rutinas}
