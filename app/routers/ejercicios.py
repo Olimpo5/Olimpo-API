@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, HTTPException
 from sqlmodel import select
-from models import *
+from models import Ejercicio, EjercicioCreate, EjercicioUpdate
 from db import DBsesion
 
 router = APIRouter()
