@@ -59,7 +59,7 @@ def eliminar_ejercicio(ejercicio_id:int, session:DBsesion):
 # ENDPOINT RELACIONALES DE LA TABLA EJERCICIO
 
 #endpoints para ver las rutinas donde se utiliza un ejercicio
-@router.get("/rutinas/{id_ejercicio}", tags=[tag_ejercicio])
+@router.get("/ejercicios/{id_ejercicio}/rutinas", tags=[tag_ejercicio])
 def listar_rutinas_ejercicio(id_ejercicio:int, session:DBsesion):
     ejercicio = session.get(Ejercicio, id_ejercicio)
     if not ejercicio:
