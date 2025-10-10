@@ -60,11 +60,11 @@ def eliminar_equipo_necesario(equipo_id:int, session: DBsesion):
 
 # Endpoint para ver los ejercicios que usan un determinado equipo
 @router.get("/EquipoNecesario/{id_equipo_necesario}", tags=[tag_router])
-def listar_ejercicios_por_equipo(id_equipo:int, session:DBsesion):
-    equipo = session.get(EquipoNecesario, id_equipo)
+def listar_ejercicios_por_equipo(id_equipo_necesario:int, session:DBsesion):
+    equipo = session.get(EquipoNecesario, id_equipo_necesario)
     if not equipo:
         raise HTTPException(status_code=404, detail="Equipo no encontrado")
 
     ejercicios = equipo.ejercicios  
 
-    return {"equipo_id": id_equipo, "nombre_equipo": equipo.nombre, "ejercicios": ejercicios}
+    return {"equipo_id": id_equipo_necesario, "nombre_equipo": equipo.nombre, "ejercicios": ejercicios}
