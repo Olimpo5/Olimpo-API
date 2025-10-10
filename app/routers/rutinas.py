@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status, HTTPException
 from sqlmodel import select
-from models import *
+from models import Rutina, RutinaCreate, RutinaUpdate, Usuario
 from db import DBsesion
 
 router = APIRouter()
