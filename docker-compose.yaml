@@ -1,6 +1,6 @@
 services: 
   olimpo:
-    image: luispmv/olimpo-api:latest
+    image: luispmv/olimpo-api:1.2.3
   webserver:
     image: nginx
     ports:
