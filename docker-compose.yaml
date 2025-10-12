@@ -2,7 +2,7 @@ services:
   olimpo:
     image: luispmv/olimpo-api:1.2.3
   webserver:
-    image: nginx
+    image: nginx:1.27-alpine
     ports:
       - "8000:80"
     volumes:
