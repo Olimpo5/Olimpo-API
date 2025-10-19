@@ -1,0 +1,38 @@
+name: Build and Push Python API to ECR
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonando repositorio de Github
+        uses: actions/checkout@v5
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5.0.0
+        with:
+          aws-region: us-east-2
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker Image
+        run: docker build -t ${{ secrets.AWS_REPO }}:latest .
+
+      - name: Tag Docker Image with commit SHA
+        run: docker tag ${{ secrets.AWS_REPO }}:latest ${{ secrets.AWS_REPO }}:${{ github.sha }}
+
+      - name: Push Docker Images to ECR
+        run: |
+          docker push ${{ secrets.AWS_REPO }}:latest
+          docker push ${{ secrets.AWS_REPO }}:${{ github.sha }}
